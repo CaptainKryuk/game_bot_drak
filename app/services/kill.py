@@ -118,7 +118,6 @@ class KillService:
 			if current_round in [2]:
 				self.location.click(health_blue_button)
 				logger.info(f'💊 Выпито зелье лечения {health_blue_button}')
-				print(123)
 
 			if current_round in [4, 7, 11]:
 				self.location.click(fire_spell)
