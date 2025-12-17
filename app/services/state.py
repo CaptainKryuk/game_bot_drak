@@ -1,14 +1,16 @@
-from utils import constants as cnst
-from .location import LocationService
 import pyautogui
+from utils import constants as cnst
+
+from .location import LocationService
 
 
 class StateService:
-
 	@staticmethod
 	def get_state(button_name: str) -> bool:
 		try:
-			LocationService.get_object_location(cnst.ObjectTypeEnum.buttons, button_name)
+			LocationService.get_object_location(
+				cnst.ObjectTypeEnum.buttons, button_name
+			)
 			return True
 		except pyautogui.ImageNotFoundException:
 			return False

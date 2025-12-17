@@ -2,14 +2,12 @@ import logging
 import random
 import time
 
-import pyautogui
-
+from services.location import LocationService
 from services.state import StateService
 from utils import constants as cnst
-from services.location import LocationService
-from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type, retry_if_exception, retry_if_result
 
 logger = logging.getLogger(__name__)
+
 
 class KillService:
 	location = LocationService
@@ -22,7 +20,9 @@ class KillService:
 
 	def _find_and_click_enemy(self, folder_name: str):
 		logger.info('🔍 Ищем противника или его марку задания')
-		enemy_location = self.location.get_object_location(cnst.ObjectTypeEnum.enemies, folder_name)
+		enemy_location = self.location.get_object_location(
+			cnst.ObjectTypeEnum.enemies, folder_name
+		)
 
 		logger.info(f'👾 Противник {folder_name} найден')
 		self.location.click(enemy_location, duration=0.1, is_double=True)
@@ -33,7 +33,9 @@ class KillService:
 
 		if self.state.is_enemy_marked():
 			logger.info('🏳 Появилась метка на противнике, необходимо нажать "Напасть"')
-			button = self.location.get_object_location(cnst.ObjectTypeEnum.buttons, 'attack')
+			button = self.location.get_object_location(
+				cnst.ObjectTypeEnum.buttons, 'attack'
+			)
 			self.location.click(button)
 			return
 
@@ -52,22 +54,25 @@ class KillService:
 		self._close_fight()
 		logger.info(f'Бой окончен, время заняло - {time.time() - time1}')
 
-
 	def get_potion(self, object_name: str):
-		return self.location.get_object_location(cnst.ObjectTypeEnum.buttons, object_name, is_repeat=False)
-
+		return self.location.get_object_location(
+			cnst.ObjectTypeEnum.buttons, object_name, is_repeat=False
+		)
 
 	def very_strong_farming_straregy_fight(self):
 		current_round = 0
-		offence_attack = self.location.get_object_location(cnst.ObjectTypeEnum.buttons, 'offence')
-		fire_spell = self.location.get_object_location(cnst.ObjectTypeEnum.buttons, 'fire')
+		offence_attack = self.location.get_object_location(
+			cnst.ObjectTypeEnum.buttons, 'offence'
+		)
+		fire_spell = self.location.get_object_location(
+			cnst.ObjectTypeEnum.buttons, 'fire'
+		)
 
 		while True:
 			health_blue = self.get_potion('health_blue')
 			health_fiol = self.get_potion('health_fiol')
 			stamina_potion = self.get_potion('stamina_potion')
 			health_potion = self.get_potion('health_potion')
-
 
 			if current_round in [0]:
 				self.location.click(stamina_potion)
@@ -95,12 +100,17 @@ class KillService:
 			if StateService.is_fight_ended():
 				break
 
-
 	def patron_farming_strategy_fight(self):
 		current_round = 0
-		offence_attack = self.location.get_object_location(cnst.ObjectTypeEnum.buttons, 'offence')
-		fire_spell = self.location.get_object_location(cnst.ObjectTypeEnum.buttons, 'fire')
-		health_blue_button = self.location.get_object_location(cnst.ObjectTypeEnum.buttons, 'health_blue')
+		offence_attack = self.location.get_object_location(
+			cnst.ObjectTypeEnum.buttons, 'offence'
+		)
+		fire_spell = self.location.get_object_location(
+			cnst.ObjectTypeEnum.buttons, 'fire'
+		)
+		health_blue_button = self.location.get_object_location(
+			cnst.ObjectTypeEnum.buttons, 'health_blue'
+		)
 
 		while True:
 			logger.info(f'🔵 {current_round} раунд начинается')
@@ -130,9 +140,15 @@ class KillService:
 	def orb_farming_strategy_fight(self):
 		current_round = 0
 
-		magic_attack = self.location.get_object_location(cnst.ObjectTypeEnum.buttons, 'magic')
-		fire_spell = self.location.get_object_location(cnst.ObjectTypeEnum.buttons, 'fire')
-		health_blue_button = self.location.get_object_location(cnst.ObjectTypeEnum.buttons, 'health_blue')
+		magic_attack = self.location.get_object_location(
+			cnst.ObjectTypeEnum.buttons, 'magic'
+		)
+		fire_spell = self.location.get_object_location(
+			cnst.ObjectTypeEnum.buttons, 'fire'
+		)
+		health_blue_button = self.location.get_object_location(
+			cnst.ObjectTypeEnum.buttons, 'health_blue'
+		)
 
 		while True:
 			logger.info(f'🔵 {current_round} раунд начинается')
@@ -160,5 +176,7 @@ class KillService:
 				break
 
 	def _close_fight(self):
-		button = self.location.get_object_location(cnst.ObjectTypeEnum.buttons, 'close_fight')
+		button = self.location.get_object_location(
+			cnst.ObjectTypeEnum.buttons, 'close_fight'
+		)
 		self.location.click(button)

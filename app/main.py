@@ -1,28 +1,28 @@
 import logging
-from os.path import isfile, join
 
 import pyautogui
-import time
-import pathlib
-from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type, retry_if_result, wait_random
-from utils import constants as cnst
-
-import os
-
 from services.kill import KillService
 from services.location import LocationService
 from services.state import StateService
+from tenacity import (
+	retry,
+	retry_if_result,
+	stop_after_attempt,
+	wait_random,
+)
+from utils import constants as cnst
 
 logger = logging.getLogger()
 
 
-pyautogui.FAILSAFE = True   # угол (0,0) аварийно останавливает скрипт
-pyautogui.PAUSE = 0.4    # пауза после каждой команды
+pyautogui.FAILSAFE = True  # угол (0,0) аварийно останавливает скрипт
+pyautogui.PAUSE = 0.4  # пауза после каждой команды
 
 screen_width, screen_height = pyautogui.size()
 region = (screen_width // 2, 0, screen_width // 2, screen_height)
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+
 
 @retry(
 	stop=stop_after_attempt(40),
@@ -44,7 +44,9 @@ def main():
 		logger.error('Необходимо находиться на карте во время запуска скрипта')
 
 	# Выбрать окно
-	location = LocationService.get_object_location(cnst.ObjectTypeEnum.buttons, 'navigation')
+	location = LocationService.get_object_location(
+		cnst.ObjectTypeEnum.buttons, 'navigation'
+	)
 	LocationService.click(location)
 
 	start_fighting()
