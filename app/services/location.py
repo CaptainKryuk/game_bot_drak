@@ -83,7 +83,7 @@ class LocationService:
 				pass
 
 		logger.info(
-			f'======== Не Удалось найти объект {folder_name} c первого раза, пробую еще ======='
+			f'======== Не Удалось найти объект {folder_name} c первого раза, пробую еще ======='  # noqa E501
 		)
 		# Сместить фокус
 		pyautogui.moveRel(random.randint(-100, 100), random.randint(-100, 100))
