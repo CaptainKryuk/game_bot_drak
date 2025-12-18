@@ -85,8 +85,14 @@ class LocationService:
 		logger.info(
 			f'======== Не Удалось найти объект {folder_name} c первого раза, пробую еще ======='  # noqa E501
 		)
+
+		# safe_mouse_points = [
+		# 	(3175, 250),
+		# 	# (2076, 247),
+		# ]
+
 		# Сместить фокус
-		pyautogui.moveRel(random.randint(-100, 100), random.randint(-100, 100))
+		pyautogui.moveTo(3175, 250)
 		raise pyautogui.ImageNotFoundException
 
 	@staticmethod
@@ -100,7 +106,7 @@ class LocationService:
 			center.y + random.randint(-5, 5),
 			duration=duration
 			if duration is not None
-			else random.randrange(100, 300) / 1000,
+			else random.randrange(100, 150) / 1000,
 		)
 
 		if is_double:

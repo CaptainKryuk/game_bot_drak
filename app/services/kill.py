@@ -45,10 +45,10 @@ class KillService:
 
 		# инициализация боя
 		# бой инициализируется 5.8 в основном
-		time.sleep(5)
+		time.sleep(4.5)
 
-		self.orb_farming_strategy_fight()
-		# self.patron_farming_strategy_fight()
+		# self.orb_farming_strategy_fight()
+		self.patron_farming_strategy_fight()
 		# self.very_strong_farming_straregy_fight()
 
 		self._close_fight()
@@ -128,7 +128,7 @@ class KillService:
 
 			current_round += 1
 
-			time.sleep(4)
+			time.sleep(3.7)
 
 			if StateService.is_can_hit():
 				continue
@@ -166,7 +166,7 @@ class KillService:
 
 			current_round += 1
 
-			time.sleep(4)
+			time.sleep(3.7)
 
 			if StateService.is_can_hit():
 				continue
