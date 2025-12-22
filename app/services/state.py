@@ -6,46 +6,47 @@ from .location import LocationService
 
 class StateService:
 	@staticmethod
-	def get_state(button_name: str) -> bool:
+	def get_state(button_name: str, screenshot) -> bool:
+		service = LocationService()
 		try:
-			LocationService.get_object_location(
-				cnst.ObjectTypeEnum.buttons, button_name
+			service.get_object_location(
+				screenshot, cnst.ObjectTypeEnum.buttons, button_name
 			)
 			return True
 		except pyautogui.ImageNotFoundException:
 			return False
 
 	@staticmethod
-	def is_on_map() -> bool:
+	def is_on_map(screenshot) -> bool:
 		"""
 		Находишься ли сейчас на карте
 		"""
-		return StateService.get_state('navigation')
+		return StateService.get_state('navigation', screenshot)
 
 	@staticmethod
-	def is_in_fight() -> bool:
+	def is_in_fight(screenshot) -> bool:
 		"""
 		Находишься ли сейчас в бою
 		"""
-		return StateService.get_state('fight_marker')
+		return StateService.get_state('fight_marker', screenshot)
 
 	@staticmethod
-	def is_can_hit() -> bool:
+	def is_can_hit(screenshot) -> bool:
 		"""
 		Находишься ли сейчас в бою
 		"""
-		return StateService.get_state('offence')
+		return StateService.get_state('offence', screenshot)
 
 	@staticmethod
-	def is_enemy_marked() -> bool:
+	def is_enemy_marked(screenshot) -> bool:
 		"""
 		Показывается ли блок "Напасть"
 		"""
-		return StateService.get_state('attack')
+		return StateService.get_state('attack', screenshot)
 
 	@staticmethod
-	def is_fight_ended() -> bool:
+	def is_fight_ended(screenshot) -> bool:
 		"""
 		Показывается ли блок "Напасть"
 		"""
-		return StateService.get_state('win_fight_marker')
+		return StateService.get_state('win_fight_marker', screenshot)

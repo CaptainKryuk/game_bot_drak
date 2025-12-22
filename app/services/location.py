@@ -20,12 +20,23 @@ region = (screen_width // 2, 0, screen_width // 2, screen_height)
 
 
 class LocationService:
-	@staticmethod
+	def choose_game_window(self, screenshot):
+		location = self.get_object_location(
+			screenshot, cnst.ObjectTypeEnum.buttons, 'navigation'
+		)
+		self.click(location)
+
+	def get_game_screenshot(self):
+		return pyautogui.screenshot(region=region)
+
 	def get_object_location(
+		self,
+		screenshot,
 		object_type: cnst.ObjectTypeEnum,
 		folder_name: str,
 		confidence: float = 0.8,
 		is_repeat=True,
+		grayscale=True,
 	):
 		"""
 		Получить локацию объекта
@@ -50,35 +61,44 @@ class LocationService:
 				raise NotImplementedError
 
 		if is_repeat:
-			return LocationService._get_location(folder_name, files, confidence)
-		return LocationService._get_location_or_none(files, confidence)
+			return self._get_location(
+				screenshot, folder_name, files, confidence, grayscale
+			)
+		return self._get_location_or_none(screenshot, files, confidence)
 
-	@staticmethod
-	def _get_location_or_none(files: list[str], confidence: float = 0.8):
+	def _get_location_or_none(
+		self, screenshot, files: list[str], confidence: float = 0.8
+	):
 		for file in files:
 			try:
-				location = pyautogui.locateOnScreen(
-					file, confidence=confidence, region=region, grayscale=True
+				location = pyautogui.locate(
+					file, screenshot, confidence=confidence, grayscale=True
 				)
-				return location
+				return self.screenshot_to_global_location(location)
 			except pyautogui.ImageNotFoundException:
 				return None
 		return None
 
-	@staticmethod
 	@retry(
 		stop=stop_after_attempt(3),
 		retry=retry_if_exception_type(pyautogui.ImageNotFoundException),
 		wait=wait_fixed(0.5),
 		reraise=True,
 	)
-	def _get_location(folder_name: str, files: list[str], confidence: float = 0.8):
+	def _get_location(
+		self,
+		screenshot,
+		folder_name: str,
+		files: list[str],
+		confidence: float = 0.8,
+		grayscale=True,
+	):
 		for file in files:
 			try:
-				location = pyautogui.locateOnScreen(
-					file, confidence=confidence, region=region, grayscale=True
+				location = pyautogui.locate(
+					file, screenshot, confidence=confidence, grayscale=grayscale
 				)
-				return location
+				return self.screenshot_to_global_location(location)
 			except pyautogui.ImageNotFoundException:
 				pass
 
@@ -95,11 +115,21 @@ class LocationService:
 		pyautogui.moveTo(3175, 250)
 		raise pyautogui.ImageNotFoundException
 
-	@staticmethod
-	def click(location, duration: float | None = None, is_double: bool = False) -> None:
+	def screenshot_to_global_location(self, location) -> tuple:
+		return (
+			region[0] + location.left,
+			region[1] + location.top,
+			location.width,
+			location.height,
+		)
+
+	def click(
+		self, location, duration: float | None = None, is_double: bool = False
+	) -> None:
 		"""
 		При клике необходимо смещение, чтобы бота не спалили
 		"""
+		print('кликаю', location)
 		center = pyautogui.center(location)
 		pyautogui.moveTo(
 			center.x + random.randint(-5, 5),
