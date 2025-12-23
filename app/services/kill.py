@@ -54,8 +54,8 @@ class KillService:
 		time.sleep(5)
 
 		# self.orb_farming_strategy_fight()
-		# self.patron_farming_strategy_fight()
-		self.very_strong_farming_straregy_fight()
+		self.patron_farming_strategy_fight()
+		# self.very_strong_farming_straregy_fight()
 
 		self._close_fight()
 		logger.info(f'Бой окончен, время заняло - {time.time() - time1}')
@@ -124,20 +124,22 @@ class KillService:
 
 	def patron_farming_strategy_fight(self):
 		current_round = 0
+		screenshot = self.location.get_game_screenshot()
+
 		offence_attack = self.location.get_object_location(
-			cnst.ObjectTypeEnum.buttons, 'offence'
+			screenshot, cnst.ObjectTypeEnum.buttons, 'offence'
 		)
 		fire_spell = self.location.get_object_location(
-			cnst.ObjectTypeEnum.buttons, 'fire'
+			screenshot, cnst.ObjectTypeEnum.buttons, 'fire'
 		)
 		health_blue_button = self.location.get_object_location(
-			cnst.ObjectTypeEnum.buttons, 'health_potion_blue'
+			screenshot, cnst.ObjectTypeEnum.buttons, 'health_potion_blue'
 		)
 
 		while True:
 			logger.info(f'🔵 {current_round} раунд начинается')
 
-			if current_round in [4]:
+			if current_round in [4, 9]:
 				self.location.click(health_blue_button)
 				logger.info(f'💊 Выпито зелье лечения {health_blue_button}')
 
@@ -148,28 +150,29 @@ class KillService:
 				self.location.click(offence_attack)
 				logger.info('🗡 Использована атака')
 
-			current_round += 1
+			time.sleep(4)
 
-			time.sleep(3.7)
-
-			if StateService.is_can_hit():
-				continue
-
-			if StateService.is_fight_ended():
+			end_round_screenshot = self.location.get_game_screenshot()
+			if not StateService.is_can_hit(
+				end_round_screenshot
+			) and StateService.is_fight_ended(end_round_screenshot):
 				logger.info('🔰 Ура! Победа!')
 				break
+
+			current_round += 1
 
 	def orb_farming_strategy_fight(self):
 		current_round = 0
 
+		screenshot = self.location.get_game_screenshot()
 		magic_attack = self.location.get_object_location(
-			cnst.ObjectTypeEnum.buttons, 'magic'
+			screenshot, cnst.ObjectTypeEnum.buttons, 'magic'
 		)
 		fire_spell = self.location.get_object_location(
-			cnst.ObjectTypeEnum.buttons, 'fire'
+			screenshot, cnst.ObjectTypeEnum.buttons, 'fire'
 		)
 		health_blue_button = self.location.get_object_location(
-			cnst.ObjectTypeEnum.buttons, 'health_potion_blue'
+			screenshot, cnst.ObjectTypeEnum.buttons, 'health_potion_blue'
 		)
 
 		while True:
@@ -186,16 +189,16 @@ class KillService:
 				self.location.click(magic_attack)
 				logger.info('🗡 Использована атака')
 
-			current_round += 1
+			time.sleep(4)
 
-			time.sleep(3.7)
-
-			if StateService.is_can_hit():
-				continue
-
-			if StateService.is_fight_ended():
+			end_round_screenshot = self.location.get_game_screenshot()
+			if not StateService.is_can_hit(
+				end_round_screenshot
+			) and StateService.is_fight_ended(end_round_screenshot):
 				logger.info('🔰 Ура! Победа!')
 				break
+
+			current_round += 1
 
 	def _close_fight(self):
 		screenshot = self.location.get_game_screenshot()

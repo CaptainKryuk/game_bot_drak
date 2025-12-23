@@ -17,7 +17,7 @@ logger = logging.getLogger()
 
 
 pyautogui.FAILSAFE = True  # угол (0,0) аварийно останавливает скрипт
-pyautogui.PAUSE = 0.4  # пауза после каждой команды
+pyautogui.PAUSE = 0.1  # пауза после каждой команды
 
 screen_width, screen_height = pyautogui.size()
 region = (screen_width // 2, 0, screen_width // 2, screen_height)
@@ -28,7 +28,7 @@ logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 @retry(
 	stop=stop_after_attempt(60),
 	retry=retry_if_result(lambda r: r is None),
-	wait=wait_random(min=3, max=6),
+	wait=wait_random(min=1, max=2),
 	reraise=True,
 )
 def start_fighting(strategy: cnst.FarmingTypeEnum):
@@ -80,7 +80,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-	# round_screenshot = LocationService().get_game_screenshot()
-	#
-	# stamina_potion = KillService().get_potion('health_potion_blue', round_screenshot)
-	# print('dain', stamina_potion)

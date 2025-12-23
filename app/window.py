@@ -23,7 +23,6 @@ end tell
 
 def main():
 	# полезно один раз распечатать, чтобы увидеть, что реально уходит в osascript
-	# print(APPLE_SCRIPT)
 	subprocess.run(['osascript', '-e', APPLE_SCRIPT], check=True)
 
 

@@ -129,7 +129,6 @@ class LocationService:
 		"""
 		При клике необходимо смещение, чтобы бота не спалили
 		"""
-		print('кликаю', location)
 		center = pyautogui.center(location)
 		pyautogui.moveTo(
 			center.x + random.randint(-5, 5),
