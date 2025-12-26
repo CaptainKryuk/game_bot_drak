@@ -1,15 +1,10 @@
 import logging
 import os
 import random
+import time
 from os.path import isfile, join
 
 import pyautogui
-from tenacity import (
-	retry,
-	retry_if_exception_type,
-	stop_after_attempt,
-	wait_fixed,
-)
 from utils import constants as cnst
 
 logger = logging.getLogger(__name__)
@@ -45,14 +40,39 @@ class LocationService:
 			f'Начинаю поиск объекта на карте {object_type.name} {folder_name}...'
 		)
 
+		files: list[str] = self.get_searching_files(object_type, folder_name)
+
+		if is_repeat:
+			for attempt in range(3):
+				if attempt > 0:
+					screenshot = self.get_game_screenshot()
+
+				try:
+					location = self._get_location(
+						screenshot, files, confidence, grayscale
+					)
+					return location
+				except pyautogui.ImageNotFoundException:
+					logger.info(
+						f'======== Не Удалось найти объект {folder_name} c первого раза, пробую еще ======='  # noqa E501
+					)
+					# Сместить фокус
+					pyautogui.moveTo(3175, 250)
+					time.sleep(0.3)
+
+			raise pyautogui.ImageNotFoundException
+
+		return self._get_location(
+			screenshot, files, confidence, grayscale=grayscale, is_raise_error=False
+		)
+
+	def get_searching_files(self, object_type, folder_name) -> list[str]:
 		match object_type:
 			case cnst.ObjectTypeEnum.buttons:
-				files = [
-					os.getcwd() + f'/app/img/{object_type.value}/{folder_name}.png'
-				]
+				return [os.getcwd() + f'/app/img/{object_type.value}/{folder_name}.png']
 			case cnst.ObjectTypeEnum.enemies:
 				img_folder = os.getcwd() + f'/app/img/{object_type.value}/{folder_name}'
-				files = [
+				return [
 					join(img_folder, x)
 					for x in os.listdir(img_folder)
 					if isfile(join(img_folder, x))
@@ -60,38 +80,13 @@ class LocationService:
 			case _:
 				raise NotImplementedError
 
-		if is_repeat:
-			return self._get_location(
-				screenshot, folder_name, files, confidence, grayscale
-			)
-		return self._get_location_or_none(screenshot, files, confidence)
-
-	def _get_location_or_none(
-		self, screenshot, files: list[str], confidence: float = 0.8
-	):
-		for file in files:
-			try:
-				location = pyautogui.locate(
-					file, screenshot, confidence=confidence, grayscale=True
-				)
-				return self.screenshot_to_global_location(location)
-			except pyautogui.ImageNotFoundException:
-				return None
-		return None
-
-	@retry(
-		stop=stop_after_attempt(3),
-		retry=retry_if_exception_type(pyautogui.ImageNotFoundException),
-		wait=wait_fixed(0.5),
-		reraise=True,
-	)
 	def _get_location(
 		self,
 		screenshot,
-		folder_name: str,
 		files: list[str],
 		confidence: float = 0.8,
 		grayscale=True,
+		is_raise_error=True,
 	):
 		for file in files:
 			try:
@@ -102,18 +97,9 @@ class LocationService:
 			except pyautogui.ImageNotFoundException:
 				pass
 
-		logger.info(
-			f'======== Не Удалось найти объект {folder_name} c первого раза, пробую еще ======='  # noqa E501
-		)
-
-		# safe_mouse_points = [
-		# 	(3175, 250),
-		# 	# (2076, 247),
-		# ]
-
-		# Сместить фокус
-		pyautogui.moveTo(3175, 250)
-		raise pyautogui.ImageNotFoundException
+		if is_raise_error:
+			raise pyautogui.ImageNotFoundException
+		return None
 
 	def screenshot_to_global_location(self, location) -> tuple:
 		return (
