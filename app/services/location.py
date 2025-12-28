@@ -10,10 +10,6 @@ from utils import constants as cnst
 logger = logging.getLogger(__name__)
 
 
-screen_width, screen_height = pyautogui.size()
-region = (screen_width // 2, 0, screen_width // 2, screen_height)
-
-
 class LocationService:
 	def choose_game_window(self, screenshot):
 		location = self.get_object_location(
@@ -21,8 +17,9 @@ class LocationService:
 		)
 		self.click(location)
 
-	def get_game_screenshot(self):
-		return pyautogui.screenshot(region=region)
+	def get_game_screenshot(self, region: tuple | None = None):
+		screen_region = region or cnst.base_region
+		return pyautogui.screenshot(region=screen_region)
 
 	def get_object_location(
 		self,
@@ -32,6 +29,7 @@ class LocationService:
 		confidence: float = 0.8,
 		is_repeat=True,
 		grayscale=True,
+		region: tuple | None = None,
 	):
 		"""
 		Получить локацию объекта
@@ -45,11 +43,11 @@ class LocationService:
 		if is_repeat:
 			for attempt in range(3):
 				if attempt > 0:
-					screenshot = self.get_game_screenshot()
+					screenshot = self.get_game_screenshot(region)
 
 				try:
 					location = self._get_location(
-						screenshot, files, confidence, grayscale
+						screenshot, files, confidence, grayscale, region=region
 					)
 					return location
 				except pyautogui.ImageNotFoundException:
@@ -63,7 +61,12 @@ class LocationService:
 			raise pyautogui.ImageNotFoundException
 
 		return self._get_location(
-			screenshot, files, confidence, grayscale=grayscale, is_raise_error=False
+			screenshot,
+			files,
+			confidence,
+			grayscale=grayscale,
+			is_raise_error=False,
+			region=region,
 		)
 
 	def get_searching_files(self, object_type, folder_name) -> list[str]:
@@ -87,13 +90,14 @@ class LocationService:
 		confidence: float = 0.8,
 		grayscale=True,
 		is_raise_error=True,
+		region: tuple | None = None,
 	):
 		for file in files:
 			try:
 				location = pyautogui.locate(
 					file, screenshot, confidence=confidence, grayscale=grayscale
 				)
-				return self.screenshot_to_global_location(location)
+				return self.screenshot_to_global_location(location, region)
 			except pyautogui.ImageNotFoundException:
 				pass
 
@@ -101,10 +105,13 @@ class LocationService:
 			raise pyautogui.ImageNotFoundException
 		return None
 
-	def screenshot_to_global_location(self, location) -> tuple:
+	def screenshot_to_global_location(
+		self, location, region: tuple | None = None
+	) -> tuple:
+		screen_region = region or cnst.base_region
 		return (
-			region[0] + location.left,
-			region[1] + location.top,
+			screen_region[0] + location.left,
+			screen_region[1] + location.top,
 			location.width,
 			location.height,
 		)

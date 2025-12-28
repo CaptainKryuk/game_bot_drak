@@ -34,14 +34,14 @@ class StrategyService:
 		match self.strategy:
 			case cnst.FarmingTypeEnum.essence:
 				return FightConsumesDTO(
-					heals_map={'health_potion_blue': [6, 12]},
+					heals_map={'health_blue': [4, 9]},
 					attack_name='magic',
 					spell_name='fire',
 					spell_rounds=[6, 8, 11, 14, 17],
 				)
 			case cnst.FarmingTypeEnum.patron:
 				return FightConsumesDTO(
-					heals_map={'health_potion_blue': [6, 12]},
+					heals_map={'health_blue': [6, 12]},
 					attack_name='offence',
 					spell_name='fire',
 					spell_rounds=[5, 8, 12],
@@ -51,11 +51,11 @@ class StrategyService:
 					heals_map={
 						'stamina_potion_blue': [1],
 						'health_fiol': [3, 5],
-						'health_potion_blue': [9, 11, 13, 15],
+						'health_blue': [9, 11, 13, 15],
 					},
 					attack_name='offence',
 					spell_name='fire',
-					spell_rounds=[4, 8, 12, 16],
+					spell_rounds=[5, 8, 12, 16],
 				)
 			case _:
 				raise AttributeError('Выбран неправильный тип стратеги')
