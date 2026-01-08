@@ -116,6 +116,12 @@ class LocationService:
 			location.height,
 		)
 
+	def move_mouse_after_attack(self):
+		"""
+		После атаки необходимо подвинуть мышку выше, чтобы не перекрывала кнопки
+		"""
+		pyautogui.moveRel(0, 30, duration=0.1)
+
 	def click(
 		self, location, duration: float | None = None, is_double: bool = False
 	) -> None:

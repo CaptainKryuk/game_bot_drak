@@ -19,8 +19,6 @@ logger = logging.getLogger()
 pyautogui.FAILSAFE = True  # угол (0,0) аварийно останавливает скрипт
 pyautogui.PAUSE = 0.05  # пауза после каждой команды
 
-screen_width, screen_height = pyautogui.size()
-region = (screen_width // 2, 0, screen_width // 2, screen_height)
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 

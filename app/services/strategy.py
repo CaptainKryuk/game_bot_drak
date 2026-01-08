@@ -41,7 +41,8 @@ class StrategyService:
 				)
 			case cnst.FarmingTypeEnum.patron:
 				return FightConsumesDTO(
-					heals_map={'health_blue': [6, 12]},
+					# heals_map={'health_blue': [6, 12]},
+					heals_map={},
 					attack_name='offence',
 					spell_name='fire',
 					spell_rounds=[5, 8, 12],
@@ -50,8 +51,10 @@ class StrategyService:
 				return FightConsumesDTO(
 					heals_map={
 						'stamina_potion_blue': [1],
-						'health_fiol': [3, 5],
-						'health_blue': [9, 11, 13, 15],
+						# 'health_fiol': [3, 5],
+						'health_fiol': [5],
+						# 'health_blue': [9, 11, 13, 15],
+						'health_blue': [9, 11, 13],
 					},
 					attack_name='offence',
 					spell_name='fire',
@@ -134,15 +137,26 @@ class StrategyService:
 				else:
 					raise Exception('а че я ударить не могу бля')
 
-			time.sleep(4)
+			self.location.move_mouse_after_attack()
+
+			time.sleep(3.8)
 
 			end_round_screenshot = self.location.get_game_screenshot()
 			if not self.state.is_can_hit(end_round_screenshot):
 				if self.state.is_fight_ended(end_round_screenshot):
 					logger.info('🔰 Ура! Победа!')
 					break
-				else:
-					raise Exception('я и бить не могу и бой не закончен')
+
+				logger.info(
+					'Кажется враг умер от обратного урона, необходимо еще подождать'
+				)
+				time.sleep(2)
+
+				if self.state.is_fight_ended(end_round_screenshot):
+					logger.info('🔰 Ура! Победа!')
+					break
+
+				raise Exception('я и бить не могу и бой не закончен')
 
 			current_round += 1
 
