@@ -44,10 +44,10 @@ def start_fighting(strategy: cnst.FarmingTypeEnum):
 
 def setup_app_args() -> cnst.FarmingTypeEnum:
 	print("""
-Выберите стратегию для фарма:
-(1) - Фарм эссенций
-(2) - Фарм репы заступника
-(3) - Фарм Воскресных мобов
+		Выберите стратегию для фарма:
+		(1) - Фарм эссенций
+		(2) - Фарм репы заступника
+		(3) - Фарм Воскресных мобов
 	""")
 	result = int(input())
 	match result:
