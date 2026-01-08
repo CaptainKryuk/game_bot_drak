@@ -79,6 +79,7 @@ class StrategyService:
 		self._run_rounds_cycle(consumes_dto)
 
 		self._close_fight()
+		print('123')
 		logger.info(f'Бой окончен, время заняло - {time.time() - time1}')
 
 	def _get_button(self, screenshot, button_name: str):
